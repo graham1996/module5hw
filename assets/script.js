@@ -4,7 +4,7 @@ const currentDay = moment().format("dddd MMM Do YYYY");
 const displayTime = moment().format('h:mm a');
 
 // timeblock time format
-let currentHour = moment().format("k");
+let currentHour = moment().format("H");
 
 // displays current date and time at top of page
 function displayCurrent() {
@@ -17,61 +17,60 @@ function displayCurrent() {
 // save input to local storage
 
 function saveTask(event) {
-  var parentRowEl = $(event.target).parents(".row");
-  var kTime = parentRowEl.attr("data-kHour");
-  var taskText = parentRowEl.find("textarea").val();
-  localStorage.setItem(kTime + "-task", JSON.stringify(taskText));
+  var mainRow = $(event.target).parents(".row");
+  var showHour = mainRow.attr("data-hour");
+  var textAr = mainRow.find("textarea").val();
+  localStorage.setItem(showHour + "-task", JSON.stringify(textAr));
 }
 
 // retrieve task from local storage
 
-function showTask(kTime) {
-  var storedTask = JSON.parse(localStorage.getItem(kTime + "-task"));
-    var taskText = "";
+function displayTask(showHour) {
+  var storedTask = JSON.parse(localStorage.getItem(showHour + "-task"));
+    var textAr = "";
     if (storedTask !== null) {
-        taskText = storedTask;
+        textAr = storedTask;
     }
-    return taskText;
+    return textAr;
 }
 
 // timeblocks
-
-function createTimeBlocks() {
+function createElement() {
   for (i = 9; i < 18; i++) {
-    createTimeBlockRow(i);
+    createRow(i);
   }
 }
 
 // creating html elements
-function createTimeBlockRow(kTime) {
+function createRow(showHour) {
 // issues getting timeblocks to line up properly
-  var containerEl = $(".container");
-  containerEl.append("<div class='row'></div>");
-  var rowEl = $(".row").last();
-  rowEl.append("<div class='hour'></div>");
-  var hourEl = rowEl.children(".hour");
-  rowEl.append("<div class='time-block'></div>");
-  var timeBlockEl = rowEl.children(".time-block");
-  timeBlockEl.append("<textarea></textarea>");
-  var textAreaEl = timeBlockEl.children("textarea");
+  var containers = $(".container");
+  containers.append("<div class='row'></div>");
+  var rows = $(".row").last();
+  rows.append("<div class='hour'></div>");
+  var hourEl = rows.children(".hour");
+  rows.append("<div class='time-block'></div>");
+  var timeblocks = rows.children(".time-block");
+  timeblocks.append("<textarea></textarea>");
+  var textInput = timeblocks.children("textarea");
   // had issues with font awesome, creating an account and using personal link seemed to fix
-  rowEl.append("<button class='saveBtn'><i class='fa-solid fa-floppy-disk'></i></button>")
-  var saveBtnEl = rowEl.children(".saveBtn");
+  rows.append("<button class='saveBtn'><i class='fa-solid fa-floppy-disk'></i></button>")
+  var saveBtnEl = rows.children(".saveBtn");
 
-  hourEl.text(moment(kTime, "k").format("hA"));
-  rowEl.attr("data-kHour", kTime);
+  hourEl.text(moment(showHour, "H").format("hA"));
+  rows.attr("data-hour", showHour);
 
-  if (currentHour == kTime) {
-    timeBlockEl.addClass("present");
-  } else if (currentHour > kTime) {
-    timeBlockEl.addClass("past");
+  if (currentHour == showHour) {
+    timeblocks.addClass("present");
+  } else if (currentHour > showHour) {
+    timeblocks.addClass("past");
   } else {
-    timeBlockEl.addClass("future");
+    timeblocks.addClass("future");
   }
 
-  textAreaEl.text(showTask(kTime));
+  textInput.text(displayTask(showHour));
   saveBtnEl.on("click", saveTask);
 }
 
 displayCurrent();
-createTimeBlocks();
+createElement();
