@@ -27,38 +27,51 @@ function saveTask(event) {
 
 function displayTask(showHour) {
   var storedTask = JSON.parse(localStorage.getItem(showHour + "-task"));
-    var textAr = "";
-    if (storedTask !== null) {
-        textAr = storedTask;
-    }
-    return textAr;
+  var textAr = "";
+  if (storedTask !== null) {
+    textAr = storedTask;
+  }
+  return textAr;
 }
 
-// timeblocks
+// timeblock color classes
+// for loop for hours
 function createElement() {
   for (i = 9; i < 18; i++) {
     createRow(i);
   }
+
 }
 
 // creating html elements
 function createRow(showHour) {
-// issues getting timeblocks to line up properly
-  var containers = $(".container");
-  containers.append("<div class='row'></div>");
-  var rows = $(".row").last();
-  rows.append("<div class='hour'></div>");
-  var hourEl = rows.children(".hour");
-  rows.append("<div class='time-block'></div>");
-  var timeblocks = rows.children(".time-block");
-  timeblocks.append("<textarea></textarea>");
-  var textInput = timeblocks.children("textarea");
-  // had issues with font awesome, creating an account and using personal link seemed to fix
-  rows.append("<button class='saveBtn'><i class='fa-solid fa-floppy-disk'></i></button>")
-  var saveBtnEl = rows.children(".saveBtn");
+  var containerDiv = $(".container");
+  containerDiv.append("<div class='row'></div>");
 
+  var rows = $(".row").last();
+  rows.addClass('row time-block');
+  rows.append("<div class='hour'></div>");
+
+  var hourEl = rows.children(".hour");
+  hourEl.addClass('col-1 hour');
   hourEl.text(moment(showHour, "H").format("hA"));
+
+  rows.append("<div class='time-block'></div>");
   rows.attr("data-hour", showHour);
+
+  // had issues with font awesome, creating an account and using personal link key seemed to fix
+  rows.append("<button class='col-1 saveBtn'><i class='fa-solid fa-floppy-disk'></i></button>")
+
+  var timeblocks = rows.children(".time-block");
+  timeblocks.addClass('col-10');
+  timeblocks.append("<textarea></textarea>");
+
+  var textInput = timeblocks.children("textarea");
+  textInput.addClass('col-10')
+  textInput.text(displayTask(showHour));
+
+  var saveBtnEl = rows.children(".saveBtn");
+  saveBtnEl.on("click", saveTask);
 
   if (currentHour == showHour) {
     timeblocks.addClass("present");
@@ -67,10 +80,8 @@ function createRow(showHour) {
   } else {
     timeblocks.addClass("future");
   }
-
-  textInput.text(displayTask(showHour));
-  saveBtnEl.on("click", saveTask);
 }
+
 
 displayCurrent();
 createElement();
